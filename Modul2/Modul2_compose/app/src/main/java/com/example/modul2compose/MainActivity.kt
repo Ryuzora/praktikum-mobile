@@ -29,6 +29,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -60,8 +61,8 @@ class MainActivity : ComponentActivity() {
 @SuppressLint("DefaultLocale")
 @Composable
 fun TipCalculator(modifier: Modifier = Modifier){
-    var inputAmount by remember { mutableStateOf("")}
-    var selectedTip by remember { mutableStateOf("15")}
+    var inputAmount by rememberSaveable { mutableStateOf("")}
+    var selectedTip by rememberSaveable { mutableStateOf("15")}
     var roundUp by remember { mutableStateOf(false) }
 
     val amount = inputAmount.toDoubleOrNull() ?: 0.0
