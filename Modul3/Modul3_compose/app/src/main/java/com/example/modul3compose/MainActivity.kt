@@ -22,7 +22,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavType
@@ -111,18 +110,5 @@ fun Home(modifier: Modifier = Modifier, onCardClick: (Int) -> Unit) {
                 Spacer(modifier = Modifier.size(8.dp))
             }
         }
-    }
-}
-
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun GreetingPreview() {
-    Modul3ComposeTheme {
-        Home(
-            modifier = Modifier
-                .background(BackgroundPink)
-                .padding(5.dp),
-            onCardClick = {}
-        )
     }
 }
