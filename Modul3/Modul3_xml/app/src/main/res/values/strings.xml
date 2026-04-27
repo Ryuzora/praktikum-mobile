@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Modul 3 xml</string>
+    <string name="featured">Featured Profiles</string>
+    <string name="all_content">All Profiles</string>
+    <string name="detail_button">Detail</string>
+    <string name="url_button">AsianWiki</string>
+    <string name="agency">Agency</string>
+    <string name="age_years">Age %1$d</string>
+</resources>
