@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">modul4 compose</string>
+    <string name="featured">Top Profiles</string>
+    <string name="all_content">All Profiles</string>
+    <string name="detail_button">Detail</string>
+    <string name="url_button">AsianWiki</string>
+    <string name="agency">Agency</string>
+</resources>
