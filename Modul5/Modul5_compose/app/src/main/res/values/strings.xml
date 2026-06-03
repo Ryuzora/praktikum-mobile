@@ -5,4 +5,17 @@
     <string name="detail_button">Detail</string>
     <string name="url_button">AsianWiki</string>
     <string name="agency">Agency</string>
+    <string name="featured_movies_title">Featured Movies</string>
+    <string name="popular_movies_title">Popular Movies</string>
+    <string name="preparing_data">Preparing data...</string>
+    <string name="error_loading_movies">Failed to load movies</string>
+    <string name="try_again_button">Try Again</string>
+    <string name="last_opened_movie_title">Last opened: %1$s</string>
+    <string name="movie_not_found">Movie not found</string>
+    <string name="back_button">Back</string>
+    <string name="release_label">Release: %1$s</string>
+    <string name="rating_label">Rating: %1$.1f</string>
+    <string name="overview_label">Overview</string>
+    <string name="imdb_button">IMDb</string>
+    <string name="tmdb_api_key_missing">TMDB API key is missing. Add TMDB_API_KEY to local.properties.</string>
 </resources>

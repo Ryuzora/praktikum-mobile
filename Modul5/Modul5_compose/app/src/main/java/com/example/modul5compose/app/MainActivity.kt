@@ -9,24 +9,28 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.modul5compose.core.database.AppDatabase
+import com.example.modul5compose.core.preferences.AppPreferences
 import com.example.modul5compose.ui.theme.BackgroundPink
 import com.example.modul5compose.ui.theme.Modul5ComposeTheme
-import com.example.modul5compose.feature.cards.detail.DetailScreen
-import com.example.modul5compose.feature.cards.home.HomeScreen
-import com.example.modul5compose.feature.cards.viewmodel.CardViewModel
-import com.example.modul5compose.feature.cards.viewmodel.CardViewModelFactory
-import timber.log.Timber
+import com.example.modul5compose.feature.movie.data.repository.MoviePreferencesRepositoryImpl
+import com.example.modul5compose.feature.movie.data.repository.MovieRepositoryImpl
+import com.example.modul5compose.feature.movie.domain.usecase.GetLastOpenedMovieTitleUseCase
+import com.example.modul5compose.feature.movie.domain.usecase.GetMovieByIdUseCase
+import com.example.modul5compose.feature.movie.domain.usecase.GetPopularMoviesUseCase
+import com.example.modul5compose.feature.movie.domain.usecase.SaveLastOpenedMovieUseCase
+import com.example.modul5compose.feature.movie.presentation.screens.MovieDetailScreen
+import com.example.modul5compose.feature.movie.presentation.screens.MovieScreen
+import com.example.modul5compose.feature.movie.presentation.viewmodel.MovieViewModel
+import com.example.modul5compose.feature.movie.presentation.viewmodel.MovieViewModelFactory
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,29 +44,23 @@ class MainActivity : ComponentActivity() {
         setContent {
             Modul5ComposeTheme {
                 val navController = rememberNavController()
-                val cardViewModel: CardViewModel = viewModel(factory = CardViewModelFactory("Main"))
-
-                val cards by cardViewModel.cards.collectAsState()
-                val selectedCardId by cardViewModel.selectedCardId.collectAsState()
-
-                LaunchedEffect(selectedCardId) {
-                    val cardId = selectedCardId
-                    if (cardId != null) {
-                        val selectedCard = cardViewModel.getCardById(cardId)
-                        if (selectedCard != null) {
-                            Timber.i(
-                                "Navigate to detail: id=%d title=%s age=%d",
-                                selectedCard.id,
-                                selectedCard.title,
-                                selectedCard.age
-                            )
-                        } else {
-                            Timber.w("Navigate to detail: card not found for id=%d", cardId)
-                        }
-                        navController.navigate("detail/$cardId")
-                        cardViewModel.onCardNavigated()
-                    }
-                }
+                val database = AppDatabase.getInstance(applicationContext)
+                val movieRepository = MovieRepositoryImpl(database.movieDao())
+                val moviePreferencesRepository = MoviePreferencesRepositoryImpl(
+                    AppPreferences(applicationContext)
+                )
+                val movieViewModel: MovieViewModel = viewModel(
+                    factory = MovieViewModelFactory(
+                        getPopularMoviesUseCase = GetPopularMoviesUseCase(movieRepository),
+                        getMovieByIdUseCase = GetMovieByIdUseCase(movieRepository),
+                        saveLastOpenedMovieUseCase = SaveLastOpenedMovieUseCase(
+                            moviePreferencesRepository
+                        ),
+                        getLastOpenedMovieTitleUseCase = GetLastOpenedMovieTitleUseCase(
+                            moviePreferencesRepository
+                        )
+                    )
+                )
 
                 Scaffold(modifier = Modifier.fillMaxSize(), containerColor = BackgroundPink) { innerPadding ->
                     NavHost(
@@ -74,11 +72,9 @@ class MainActivity : ComponentActivity() {
                             .padding(5.dp)
                     ) {
                         composable(route = "home") {
-                            HomeScreen(
-                                cards = cards,
-                                onCardClick = { clickedId ->
-                                    cardViewModel.onCardClick(clickedId)
-                                }
+                            MovieScreen(
+                                navController = navController,
+                                viewModel = movieViewModel
                             )
                         }
 
@@ -87,7 +83,11 @@ class MainActivity : ComponentActivity() {
                             arguments = listOf(navArgument("cardId") { type = NavType.IntType })
                         ) { backStackEntry ->
                             val cardId = backStackEntry.arguments?.getInt("cardId") ?: -1
-                            DetailScreen(cardId = cardId, viewModel = cardViewModel)
+                            MovieDetailScreen(
+                                movieId = cardId,
+                                viewModel = movieViewModel,
+                                onBackClick = { navController.popBackStack() }
+                            )
                         }
                     }
                 }
